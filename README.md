@@ -2,7 +2,7 @@
 
 Realm is a mobile database that runs directly inside phones, tablets or wearables.
 
-This repository holds the library to allow __Sync__ client under Android [https://realm.io/docs/realm-object-server/](Realm Object Server) to encrypt the
+This repository holds the library to allow _Sync_ client under Android [Realm Object Server](https://realm.io/docs/realm-object-server/) to encrypt the
 token saved in `SharedPreferences`, once the user is authenticated. The encryption uses the Android KeyStore available
  to generate and uses `RSA` and `AES` keys for encryption operations.
 
@@ -11,7 +11,7 @@ token saved in `SharedPreferences`, once the user is authenticated. The encrypti
 This library only works together with Realm Java. Please see the [detailed instructions in our docs](https://realm.io/docs/java/#installation)
 to add Realm to your project.
 
-To add the adapters to your project, add the following to you app's dependencies:
+To add the this library to your project, add the following to you app's dependencies:
 
 ```
 repositories {
@@ -50,7 +50,8 @@ repositories {
 
 dependencies {
     compile 'io.realm:android-sync-user-encryption:<version>'
-}```
+}
+```
 
 See [version.txt](version.txt) for the latest version number.
 
