@@ -165,9 +165,9 @@ install {
 
 publishing {
     publications {
-        basePublication(MavenPublication) {
+        AAR(MavenPublication) {
             groupId 'io.realm'
-            artifactId 'sync-user-encryption'
+            artifactId 'android-sync-user-encryption'
             version project.version
             artifact file("${rootDir}/app/build/outputs/aar/app-release.aar")
             artifact sourcesJar

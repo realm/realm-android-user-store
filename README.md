@@ -74,6 +74,13 @@ That command will generate:
 
  * an `aar` file for the library in `app/build/outputs/aar/android-sync-user-encryption-release.aar`
 
+
+you can also install the `aar` into your local maven repository.
+
+ ```
+ ./gradlew publishAARPublicationToMavenLocal
+ ```
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for more details!
