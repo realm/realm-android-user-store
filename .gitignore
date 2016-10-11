@@ -1,0 +1,54 @@
+# Gradle build artifacts
+build
+realm/build
+
+# Gradle cache
+.gradle
+
+# Gradle local properties
+local.properties
+
+# Core
+core
+core-*
+realm-sync-android-*
+
+# Android Studio
+.idea
+*.iml
+
+# DS_Store
+.DS_Store
+*/.DS_Store
+
+# JNI libs
+realm_version_check.timestamp
+
+# Build artifacts
+*.so
+*.d
+*.o
+
+# Backup files
+*.bak
+*~
+
+# Navigation Editor
+.navigation
+
+# Distribution files
+realm*.jar
+realm*.aar
+distribution/*/realm
+distribution/javadoc
+distribution/version.txt
+distribution/RealmGridViewExample/app/src
+distribution/RealmIntroExample/app/src
+distribution/RealmMigrationExample/app/src
+
+# Generated JNI headers
+realm/realm-library/src/main/cpp/jni_include
+# Downloaded core
+realm/realm-library/distribution
+# Cmake output
+realm/realm-library/.externalNativeBuild
