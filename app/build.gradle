@@ -169,7 +169,7 @@ publishing {
             groupId 'io.realm'
             artifactId 'android-sync-user-encryption'
             version project.version
-            artifact file("${rootDir}/app/build/outputs/aar/app-release.aar")
+            artifact file("${rootDir}/app/build/outputs/aar/android-sync-user-encryption-release.aar")
             artifact sourcesJar
             artifact javadocJar
         }

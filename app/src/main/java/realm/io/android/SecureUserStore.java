@@ -26,7 +26,6 @@ import java.util.Map;
 
 import io.realm.User;
 import io.realm.UserStore;
-import realm.io.android.internal.android.crypto.CipherClient;
 
 /**
  * Encrypt and decrypt the token ({@link User}) using Android built in KeyStore capabilities.

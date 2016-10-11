@@ -36,7 +36,6 @@ import io.realm.RealmConfiguration;
 import io.realm.User;
 import io.realm.UserStore;
 import realm.io.TestHelper;
-import realm.io.android.internal.android.crypto.CipherClient;
 import realm.io.rule.TestRealmConfigurationFactory;
 
 import static org.junit.Assert.assertEquals;
