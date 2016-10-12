@@ -16,7 +16,7 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-        project.archivesBaseName = "android-sync-user-encryption"
+        project.archivesBaseName = "secure-userstore"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -167,9 +167,9 @@ publishing {
     publications {
         AAR(MavenPublication) {
             groupId 'io.realm'
-            artifactId 'android-sync-user-encryption'
+            artifactId 'secure-userstore'
             version project.version
-            artifact file("${rootDir}/app/build/outputs/aar/android-sync-user-encryption-release.aar")
+            artifact file("${rootDir}/app/build/outputs/aar/secure-userstore-release.aar")
             artifact sourcesJar
             artifact javadocJar
         }
