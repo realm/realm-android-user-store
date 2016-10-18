@@ -105,7 +105,7 @@ task javadoc(type: Javadoc) {
     source = android.sourceSets.main.java.srcDirs
 
     options {
-        title = "Realm Android Adapters ${project.version}"
+        title = "Realm Secure UserStore ${project.version}"
         memberLevel = JavadocMemberLevel.PUBLIC
         docEncoding = 'UTF-8'
         encoding = 'UTF-8'
@@ -137,8 +137,8 @@ install {
                 packaging 'aar'
 
                 // Add your description here
-                name 'sync-user-encryption'
-                description 'Android UI adapters for Realm. Realm is a mobile database: a replacement for SQLite & ORMs.'
+                name 'secure-userstore'
+                description 'Encrypt the user token obtained from Realm Object Server. Realm is a mobile database: a replacement for SQLite & ORMs.'
                 url 'http://realm.io'
 
                 // Set your license
@@ -151,12 +151,12 @@ install {
                 }
                 issueManagement {
                     system 'github'
-                    url 'https://github.com/realm/realm-android-adapters/issues'
+                    url 'https://github.com/realm/realm-android-user-store/issues'
                 }
                 scm {
                     url 'scm:https://github.com/realm/realm-java'
-                    connection 'scm:git@github.com:realm/realm-android-adapters.git'
-                    developerConnection 'scm:git@github.com:realm/realm-android-adapters.git'
+                    connection 'scm:git@github.com/realm/realm-android-user-store.git'
+                    developerConnection 'scm:git@github.com/realm/realm-android-user-store.git'
                 }
             }
         }
@@ -187,11 +187,11 @@ bintray {
 
     pkg {
         repo = 'maven'
-        name = 'android-adapters'
-        desc = 'Realm Android Adapters'
+        name = 'secure-userstore'
+        desc = 'Realm Secure UserStore'
         websiteUrl = 'http://realm.io'
-        issueTrackerUrl = 'https://github.com/realm/realm-android-adapters/issues'
-        vcsUrl = 'https://github.com/realm/realm-android-adapters.git'
+        issueTrackerUrl = 'https://github.com/realm/realm-android-user-store/issues'
+        vcsUrl = 'https://github.com/realm/realm-android-user-store.git'
         licenses = ['Apache-2.0']
         labels = ['android', 'realm']
         publicDownloadNumbers = false
