@@ -23,6 +23,7 @@ import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Set;
 
 import io.realm.User;
 import io.realm.UserStore;
@@ -157,5 +158,15 @@ public class SecureUserStore implements UserStore {
             users.add(User.fromJson(userSerialisedAndDecrypted));
         }
         return users;
+    }
+
+    @Override
+    public void clear() {
+        Set<String> all = sp.getAll().keySet();
+        SharedPreferences.Editor editor = sp.edit();
+        for (String key : all) {
+            editor.remove(key);
+        }
+        editor.apply();
     }
 }
