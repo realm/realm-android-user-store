@@ -6,11 +6,11 @@ project.ext.realmVersion = '2.1.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        maven {   url "${System.env.HOME}/.m2/repository" }
+        maven { url "${System.env.HOME}/.m2/repository" }
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0-rc2'
+        classpath 'com.android.tools.build:gradle:2.2.0'
         classpath 'io.realm:realm-gradle-plugin:2.1.0-SNAPSHOT'
         classpath 'ch.netzwerg:gradle-release-plugin:1.2.0'                 // Manage Release tags / versioning
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'    // Allows you to install AAR's locally

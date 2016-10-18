@@ -1,5 +1,5 @@
 apply plugin: 'com.android.library'
-apply plugin: 'realm-android'//consider using provided (add compile option manually)
+apply plugin: 'realm-android'// needed to process the realm DSL
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.artifactory'
@@ -31,12 +31,8 @@ repositories {
     maven {   url "${System.env.HOME}/.m2/repository" }
 }
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    testCompile 'junit:junit:4.12'
+    provided "io.realm:realm-android-library:${realmVersion}"
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }
 
 realm {
