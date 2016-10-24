@@ -1,17 +1,17 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 apply plugin: 'ch.netzwerg.release'
 project.ext.sdkVersion = 24
-project.ext.buildTools = '24.0.0'
-project.ext.realmVersion = '2.1.0-SNAPSHOT'
+project.ext.buildTools = '24.0.3'
+project.ext.realmVersion = '2.0.2'
 
 buildscript {
     repositories {
-        maven {   url "${System.env.HOME}/.m2/repository" }
+        maven { url "${System.env.HOME}/.m2/repository" }
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.0-rc2'
-        classpath 'io.realm:realm-gradle-plugin:2.1.0-SNAPSHOT'
+        classpath 'com.android.tools.build:gradle:2.2.0'
+        classpath 'io.realm:realm-gradle-plugin:2.0.2'
         classpath 'ch.netzwerg:gradle-release-plugin:1.2.0'                 // Manage Release tags / versioning
         classpath 'com.github.dcendents:android-maven-gradle-plugin:1.5'    // Allows you to install AAR's locally
         classpath 'org.jfrog.buildinfo:build-info-extractor-gradle:4.0.1'   // OJO integration
