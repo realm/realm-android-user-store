@@ -1,7 +1,7 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 apply plugin: 'ch.netzwerg.release'
 project.ext.sdkVersion = 24
-project.ext.buildTools = '24.0.0'
+project.ext.buildTools = '24.0.3'
 project.ext.realmVersion = '2.0.2'
 
 buildscript {
