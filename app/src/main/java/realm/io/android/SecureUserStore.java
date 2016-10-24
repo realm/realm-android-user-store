@@ -160,13 +160,14 @@ public class SecureUserStore implements UserStore {
         return users;
     }
 
-    @Override
-    public void clear() {
-        Set<String> all = sp.getAll().keySet();
-        SharedPreferences.Editor editor = sp.edit();
-        for (String key : all) {
-            editor.remove(key);
-        }
-        editor.apply();
-    }
+//    Uncomment when 2.1.0 is released, so we can use the new interface form master
+//    @Override
+//    public void clear() {
+//        Set<String> all = sp.getAll().keySet();
+//        SharedPreferences.Editor editor = sp.edit();
+//        for (String key : all) {
+//            editor.remove(key);
+//        }
+//        editor.apply();
+//    }
 }
