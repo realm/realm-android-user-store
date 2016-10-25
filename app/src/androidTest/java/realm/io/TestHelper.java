@@ -16,31 +16,29 @@
 
 package realm.io;
 
-import android.support.test.InstrumentationRegistry;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.UUID;
 
-import io.realm.User;
-import io.realm.internal.objectserver.SyncUser;
+import io.realm.SyncUser;
+import io.realm.internal.objectserver.ObjectServerUser;
 import io.realm.internal.objectserver.Token;
 
 public class TestHelper {
     public static String USER_TOKEN = UUID.randomUUID().toString();
     public static String REALM_TOKEN = UUID.randomUUID().toString();
 
-    public static User createTestUser() {
+    public static SyncUser createTestUser() {
         return createTestUser(Long.MAX_VALUE);
     }
 
-    public static User createTestUser(long expires) {
+    public static SyncUser createTestUser(long expires) {
         Token userToken = new Token(USER_TOKEN, "JohnDoe", null, expires, null);
         Token accessToken = new Token(REALM_TOKEN, "JohnDoe", "/foo", expires, new Token.Permission[] {Token.Permission.DOWNLOAD });
-        SyncUser.AccessDescription desc = new SyncUser.AccessDescription(accessToken, "/data/data/myapp/files/default", false);
-//        SyncUser.AccessDescription desc = new SyncUser.AccessDescription(accessToken, InstrumentationRegistry.getTargetContext().getFilesDir().getPath() + "/myapp/files/default", false);
+        ObjectServerUser.AccessDescription desc = new ObjectServerUser.AccessDescription(accessToken, "/data/data/myapp/files/default", false);
+
         JSONObject obj = new JSONObject();
         try {
             JSONArray realmList = new JSONArray();
@@ -52,7 +50,7 @@ public class TestHelper {
             obj.put("authUrl", "http://objectserver.realm.io/auth");
             obj.put("userToken", userToken.toJson());
             obj.put("realms", realmList);
-            return User.fromJson(obj.toString());
+            return SyncUser.fromJson(obj.toString());
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }

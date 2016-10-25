@@ -33,7 +33,7 @@ import java.security.KeyStoreException;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import io.realm.User;
+import io.realm.SyncUser;
 import io.realm.UserStore;
 import realm.io.TestHelper;
 import realm.io.rule.TestRealmConfigurationFactory;
@@ -84,11 +84,11 @@ public class UserStoreTest {
 
     @Test
     public void encrypt_decrypt_UsingAndroidKeyStoreUserStore() throws KeyStoreException {
-        User user = TestHelper.createTestUser();
+        SyncUser user = TestHelper.createTestUser();
         UserStore userStore = new SecureUserStore(InstrumentationRegistry.getTargetContext());
-        User savedUser = userStore.put("crypted_entry", user);
+        SyncUser savedUser = userStore.put("crypted_entry", user);
         assertNull(savedUser);
-        User decrypted_entry = userStore.get("crypted_entry");
+        SyncUser decrypted_entry = userStore.get("crypted_entry");
         assertEquals(user, decrypted_entry);
      }
 }
