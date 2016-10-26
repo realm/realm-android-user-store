@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto;
+package io.realm.android.internal.android.crypto;
 
 import android.content.Context;
 import android.os.Build;
 
 import java.security.KeyStoreException;
 
-import realm.io.android.internal.android.crypto.api_18.SyncCryptoApi18Impl;
-import realm.io.android.internal.android.crypto.api_23.SyncCryptoApi23Impl;
-import realm.io.android.internal.android.crypto.api_legacy.SyncCryptoLegacy;
+import io.realm.android.internal.android.crypto.api_18.SyncCryptoApi18Impl;
+import io.realm.android.internal.android.crypto.api_23.SyncCryptoApi23Impl;
+import io.realm.android.internal.android.crypto.api_legacy.SyncCryptoLegacy;
 
 /**
  * Return an appropriate {@link SyncCrypto} given the version of Android.

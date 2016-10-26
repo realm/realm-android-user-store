@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package realm.io.android;
+package io.realm.android;
 
 import android.content.Context;
 
 import java.security.KeyStoreException;
 
-import realm.io.android.internal.android.crypto.SyncCrypto;
-import realm.io.android.internal.android.crypto.SyncCryptoFactory;
+import io.realm.android.internal.android.crypto.SyncCrypto;
+import io.realm.android.internal.android.crypto.SyncCryptoFactory;
 
 /**
  * A Helper to use the crypto API, it allows encryption/decryption and has methods to help test if the KeyStore is locked and help unlocked it.

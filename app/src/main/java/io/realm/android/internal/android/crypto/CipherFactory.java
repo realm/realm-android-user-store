@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto;
+package io.realm.android.internal.android.crypto;
 
 import android.os.Build;
 
@@ -24,9 +24,9 @@ import java.security.NoSuchProviderException;
 import javax.crypto.Cipher;
 import javax.crypto.NoSuchPaddingException;
 
-import realm.io.android.internal.android.crypto.ciper.CipherJB;
-import realm.io.android.internal.android.crypto.ciper.CipherLegacy;
-import realm.io.android.internal.android.crypto.ciper.CipherMM;
+import io.realm.android.internal.android.crypto.ciper.CipherJB;
+import io.realm.android.internal.android.crypto.ciper.CipherLegacy;
+import io.realm.android.internal.android.crypto.ciper.CipherMM;
 
 /**
  * Return an appropriate {@link Cipher} given the version of Android.

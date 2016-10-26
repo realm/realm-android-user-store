@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io;
+package io.realm;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -22,7 +22,6 @@ import org.json.JSONObject;
 
 import java.util.UUID;
 
-import io.realm.SyncUser;
 import io.realm.internal.objectserver.ObjectServerUser;
 import io.realm.internal.objectserver.Token;
 

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto.ciper;
-
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
-import javax.crypto.NoSuchPaddingException;
+package io.realm.android.internal.android.crypto.misc;
 
 /**
- * Return a {@link javax.crypto.Cipher} that works for API &ge; 23.
+ * Base64 helper methods.
  */
-public class CipherMM {
-    public static javax.crypto.Cipher get() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
-        return javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding");
+public class Base64 {
+    public static String to(byte[] bytes) {
+        return android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP);
     }
+
+    public static byte[] from(String base64) {
+        return android.util.Base64.decode(base64, android.util.Base64.NO_WRAP);
+    }
+
 }

@@ -1,5 +1,4 @@
 apply plugin: 'com.android.library'
-apply plugin: 'realm-android'// needed to process the realm DSL
 apply plugin: 'maven-publish'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.artifactory'
@@ -31,15 +30,12 @@ repositories {
     maven {   url "${System.env.HOME}/.m2/repository" }
 }
 dependencies {
-    provided "io.realm:realm-android-library:${realmVersion}"
+    provided "io.realm:realm-android-library-object-server:${realmVersion}"
     androidTestCompile ('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     androidTestCompile 'com.android.support:support-annotations:24.2.1'
-}
-
-realm {
-    syncEnabled = true
+    androidTestCompile "io.realm:realm-android-library-object-server:${realmVersion}"
 }
 
 task clean(type: Delete) {
@@ -176,7 +172,7 @@ publishing {
 }
 
 bintray {
-    user = project.hasProperty('bintrayUser') ? bintrayUser : 'noUser'
+    user = project.hasProperty('bintrayUser') ? bintrayUser : 'noKey'
     key = project.hasProperty('bintrayKey') ? bintrayKey : 'noKey'
 
     dryRun = false

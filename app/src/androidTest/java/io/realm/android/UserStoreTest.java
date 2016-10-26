@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.android;
+package io.realm.android;
 
 import android.app.KeyguardManager;
 import android.content.Context;
@@ -34,9 +34,9 @@ import java.security.KeyStoreException;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.SyncUser;
+import io.realm.TestHelper;
 import io.realm.UserStore;
-import realm.io.TestHelper;
-import realm.io.rule.TestRealmConfigurationFactory;
+import io.realm.rule.TestRealmConfigurationFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

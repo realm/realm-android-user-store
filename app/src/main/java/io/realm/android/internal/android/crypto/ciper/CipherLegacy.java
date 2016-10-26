@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto.misc;
+package io.realm.android.internal.android.crypto.ciper;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+
+import javax.crypto.NoSuchPaddingException;
 
 /**
- * Base64 helper methods.
+ * Return a {@link javax.crypto.Cipher} that works for the legacy API 9 to 18.
  */
-public class Base64 {
-    public static String to(byte[] bytes) {
-        return android.util.Base64.encodeToString(bytes, android.util.Base64.NO_WRAP);
+public class CipherLegacy {
+    public static javax.crypto.Cipher get() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
+        return javax.crypto.Cipher.getInstance("AES/CBC/PKCS5Padding");
     }
-
-    public static byte[] from(String base64) {
-        return android.util.Base64.decode(base64, android.util.Base64.NO_WRAP);
-    }
-
 }

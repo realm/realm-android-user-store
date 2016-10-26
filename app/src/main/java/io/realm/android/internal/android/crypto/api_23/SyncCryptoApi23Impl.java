@@ -1,4 +1,4 @@
-package realm.io.android.internal.android.crypto.api_23;
+package io.realm.android.internal.android.crypto.api_23;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -15,8 +15,8 @@ import java.security.NoSuchProviderException;
 import java.util.Calendar;
 import javax.security.auth.x500.X500Principal;
 
-import realm.io.android.internal.android.crypto.SyncCrypto;
-import realm.io.android.internal.android.crypto.api_18.SyncCryptoApi18Impl;
+import io.realm.android.internal.android.crypto.SyncCrypto;
+import io.realm.android.internal.android.crypto.api_18.SyncCryptoApi18Impl;
 
 /**
  * Implements {@link SyncCrypto} methods for API 23 (after the Android KeyStore public API), using

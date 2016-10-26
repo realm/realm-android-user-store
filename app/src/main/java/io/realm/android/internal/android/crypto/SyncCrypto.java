@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto;
+package io.realm.android.internal.android.crypto;
 
 import android.app.Activity;
 
