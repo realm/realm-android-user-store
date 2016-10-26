@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto.ciper;
+package io.realm.android.internal.android.crypto.ciper;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;

@@ -1,4 +1,4 @@
-package realm.io.android.internal.android.crypto.misc;
+package io.realm.android.internal.android.crypto.misc;
 
 import android.os.Build;
 import android.os.Process;

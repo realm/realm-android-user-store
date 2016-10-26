@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto.ciper;
+package io.realm.android.internal.android.crypto.ciper;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -22,10 +22,10 @@ import java.security.NoSuchProviderException;
 import javax.crypto.NoSuchPaddingException;
 
 /**
- * Return a {@link javax.crypto.Cipher} that works for the legacy API 9 to 18.
+ * Return a {@link javax.crypto.Cipher} that works for API &ge; 23.
  */
-public class CipherLegacy {
+public class CipherMM {
     public static javax.crypto.Cipher get() throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
-        return javax.crypto.Cipher.getInstance("AES/CBC/PKCS5Padding");
+        return javax.crypto.Cipher.getInstance("RSA/ECB/PKCS1Padding");
     }
 }

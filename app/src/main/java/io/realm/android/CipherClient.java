@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package realm.io.android;
+package io.realm.android;
 
 import android.content.Context;
 
 import java.security.KeyStoreException;
 
-import realm.io.android.internal.android.crypto.SyncCrypto;
-import realm.io.android.internal.android.crypto.SyncCryptoFactory;
+import io.realm.android.internal.android.crypto.SyncCrypto;
+import io.realm.android.internal.android.crypto.SyncCryptoFactory;
 
 /**
  * A Helper to use the crypto API, it allows encryption/decryption and has methods to help test if the KeyStore is locked and help unlocked it.
@@ -44,7 +44,7 @@ public class CipherClient {
      * Takes some plain text {@link String} and return the encrypted version
      * of this {@link String} using the Android Key Store.
      *
-     * @param user represents the Token of a {@link io.realm.User}.
+     * @param user represents the Token of a {@link io.realm.SyncUser}.
      * @return the encrypted Token.
      * @throws KeyStoreException in case the Key Store is locked or other error.
      */
@@ -66,7 +66,7 @@ public class CipherClient {
      * Takes a previously {@link #encrypt(String)} to decrypted it
      * using the Android Key Store.
      *
-     * @param user_encrypted represents the encrypted Token of a {@link io.realm.User}.
+     * @param user_encrypted represents the encrypted Token of a {@link io.realm.SyncUser}.
      * @return the decrypted Token.
      * @throws KeyStoreException in case the KeyStore is locked or other error.
      */

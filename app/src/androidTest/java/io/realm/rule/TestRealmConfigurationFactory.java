@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.rule;
+package io.realm.rule;
 
 import android.support.test.InstrumentationRegistry;
 

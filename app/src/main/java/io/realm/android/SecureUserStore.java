@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.android;
+package io.realm.android;
 
 import android.content.Context;
 import android.content.SharedPreferences;

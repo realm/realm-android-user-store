@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package realm.io.android.internal.android.crypto.api_legacy;
+package io.realm.android.internal.android.crypto.api_legacy;
 
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -37,10 +37,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import realm.io.android.internal.android.crypto.CipherFactory;
-import realm.io.android.internal.android.crypto.SyncCrypto;
-import realm.io.android.internal.android.crypto.misc.Base64;
-import realm.io.android.internal.android.crypto.misc.PRNGFixes;
+import io.realm.android.internal.android.crypto.CipherFactory;
+import io.realm.android.internal.android.crypto.SyncCrypto;
+import io.realm.android.internal.android.crypto.misc.Base64;
+import io.realm.android.internal.android.crypto.misc.PRNGFixes;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
