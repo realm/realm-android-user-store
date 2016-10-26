@@ -172,7 +172,7 @@ publishing {
 }
 
 bintray {
-    user = project.hasProperty('bintrayUser') ? bintrayUser : 'noKey'
+    user = project.hasProperty('bintrayUser') ? bintrayUser : 'noUser'
     key = project.hasProperty('bintrayKey') ? bintrayKey : 'noKey'
 
     dryRun = false
