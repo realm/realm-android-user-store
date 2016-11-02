@@ -172,8 +172,8 @@ publishing {
 }
 
 bintray {
-    user = project.hasProperty('bintrayUser') ? bintrayUser : 'realm'
-    key = project.hasProperty('bintrayKey') ? bintrayKey : '3fd40ff3716a5513ebfeb7f9e8b211ba5fba1b64'
+    user = project.hasProperty('bintrayUser') ? bintrayUser : 'noUser'
+    key = project.hasProperty('bintrayKey') ? bintrayKey : 'noKey'
 
     dryRun = false
     publish = false
