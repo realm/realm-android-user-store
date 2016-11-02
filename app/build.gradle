@@ -15,7 +15,7 @@ android {
         targetSdkVersion 24
         versionCode 1
         versionName "1.0"
-        project.archivesBaseName = "secure-userstore"
+        project.archivesBaseName = "android-secure-userstore"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -172,8 +172,8 @@ publishing {
 }
 
 bintray {
-    user = project.hasProperty('bintrayUser') ? bintrayUser : 'noUser'
-    key = project.hasProperty('bintrayKey') ? bintrayKey : 'noKey'
+    user = project.hasProperty('bintrayUser') ? bintrayUser : 'realm'
+    key = project.hasProperty('bintrayKey') ? bintrayKey : '3fd40ff3716a5513ebfeb7f9e8b211ba5fba1b64'
 
     dryRun = false
     publish = false
@@ -182,7 +182,7 @@ bintray {
 
     pkg {
         repo = 'maven'
-        name = 'secure-userstore'
+        name = 'android-secure-userstore'
         desc = 'Realm Secure UserStore'
         websiteUrl = 'http://realm.io'
         issueTrackerUrl = 'https://github.com/realm/realm-android-user-store/issues'
