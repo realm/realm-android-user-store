@@ -6,8 +6,8 @@ project.ext.realmVersion = '2.2.0-SNAPSHOT'
 
 buildscript {
     repositories {
-        maven { url "${System.env.HOME}/.m2/repository" }
         jcenter()
+        maven { url "${System.env.HOME}/.m2/repository" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.0'
