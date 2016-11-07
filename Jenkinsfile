@@ -27,7 +27,7 @@ try {
           try {
             // unlock the device
             unlockDevice()
-            adb shell input text XXXX && adb shell input keyevent 66
+            adb shell input text 1234 && adb shell input keyevent 66
             gradle 'assemble javadoc check connectedCheck'
             if (env.BRANCH_NAME == 'master') {
               stage('Collect metrics') {
