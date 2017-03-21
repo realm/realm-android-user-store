@@ -33,13 +33,13 @@ import java.security.KeyStoreException;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.SyncManager;
 import io.realm.SyncUser;
 import io.realm.TestHelper;
 import io.realm.UserStore;
 import io.realm.rule.TestRealmConfigurationFactory;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -52,6 +52,7 @@ public class UserStoreTest {
 
     @Before
     public void setUp() {
+        Realm.init(InstrumentationRegistry.getTargetContext());
         RealmConfiguration realmConfig = configFactory.createConfiguration();
         realm = Realm.getInstance(realmConfig);
     }
@@ -86,9 +87,10 @@ public class UserStoreTest {
     public void encrypt_decrypt_UsingAndroidKeyStoreUserStore() throws KeyStoreException {
         SyncUser user = TestHelper.createTestUser();
         UserStore userStore = new SecureUserStore(InstrumentationRegistry.getTargetContext());
-        SyncUser savedUser = userStore.put("crypted_entry", user);
-        assertNull(savedUser);
-        SyncUser decrypted_entry = userStore.get("crypted_entry");
+        SyncManager.setUserStore(userStore);
+
+        userStore.put(user);
+        SyncUser decrypted_entry = userStore.get();
         assertEquals(user, decrypted_entry);
      }
 }
