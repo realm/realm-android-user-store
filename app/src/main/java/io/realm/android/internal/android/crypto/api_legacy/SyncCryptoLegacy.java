@@ -19,6 +19,7 @@ package io.realm.android.internal.android.crypto.api_legacy;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.net.LocalSocket;
 import android.net.LocalSocketAddress;
 
@@ -49,7 +50,6 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
  */
 public class SyncCryptoLegacy implements SyncCrypto {
     private Context context;
-    private SecretKey key;
     private String alias = "Realm";
     private int mError = NO_ERROR;
     private SecureRandom random = new SecureRandom();
@@ -65,7 +65,7 @@ public class SyncCryptoLegacy implements SyncCrypto {
     // States
     private enum State {
         UNLOCKED, LOCKED, UNINITIALIZED
-    };
+    }
 
     private static final LocalSocketAddress sAddress = new LocalSocketAddress(
             "keystore", LocalSocketAddress.Namespace.RESERVED);
@@ -75,6 +75,12 @@ public class SyncCryptoLegacy implements SyncCrypto {
     public SyncCryptoLegacy (Context context) throws KeyStoreException {
         PRNGFixes.apply();
         this.context = context;
+
+        try {
+            PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            alias += "_" + pi.packageName; // make the alias unique per package
+        } catch (Exception ignore) {
+        }
     }
 
     @Override
@@ -84,6 +90,9 @@ public class SyncCryptoLegacy implements SyncCrypto {
 
             byte[] iv = generateIv(cipher.getBlockSize());
             IvParameterSpec ivParams = new IvParameterSpec(iv);
+
+            SecretKeySpec key = new SecretKeySpec(get(alias), "AES");
+
             cipher.init(Cipher.ENCRYPT_MODE, key, ivParams);
             byte[] cipherText = cipher.doFinal(plainText.getBytes("UTF-8"));
 
@@ -141,18 +150,20 @@ public class SyncCryptoLegacy implements SyncCrypto {
     }
 
     @Override
-    public void create_key() throws KeyStoreException {
-        try {
-            KeyGenerator kg = KeyGenerator.getInstance("AES");
-            kg.init(KEY_LENGTH);
-            key = kg.generateKey();
+    public void create_key_if_not_available() throws KeyStoreException {
+        if (get(alias) == null) {
+            try {
+                KeyGenerator kg = KeyGenerator.getInstance("AES");
+                kg.init(KEY_LENGTH);
+                SecretKey key = kg.generateKey();
 
-            boolean success = put(getBytes(alias), key.getEncoded());
-            if (!success) {
-                throw new KeyStoreException("Keystore error");
+                boolean success = put(getBytes(alias), key.getEncoded());
+                if (!success) {
+                    throw new KeyStoreException("Keystore error");
+                }
+            } catch (Exception e) {
+                throw new KeyStoreException(e);
             }
-        } catch (Exception e) {
-            throw new KeyStoreException(e);
         }
     }
 

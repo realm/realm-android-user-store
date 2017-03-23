@@ -34,7 +34,7 @@ import io.realm.android.internal.android.crypto.SyncCryptoFactory;
  * to unlock the screen &amp; the KeyStore.
  */
 public class CipherClient {
-    private SyncCrypto syncCrypto;
+    private final SyncCrypto syncCrypto;
 
     public CipherClient(Context context) throws KeyStoreException {
         syncCrypto = SyncCryptoFactory.get(context);
@@ -50,10 +50,9 @@ public class CipherClient {
      */
     public String encrypt(String user) throws KeyStoreException {
         if (syncCrypto.is_keystore_unlocked()) {
+            syncCrypto.create_key_if_not_available();
             try {
-                syncCrypto.create_key();
-                String encrypted = syncCrypto.encrypt(user);
-                return encrypted;
+                return syncCrypto.encrypt(user);
             } catch (KeyStoreException ex) {
                 throw new KeyStoreException(ex);
             }
@@ -73,8 +72,7 @@ public class CipherClient {
     public String decrypt(String user_encrypted) throws KeyStoreException {
         if (syncCrypto.is_keystore_unlocked()) {
             try {
-                String decrypted = syncCrypto.decrypt(user_encrypted);
-                return decrypted;
+                return syncCrypto.decrypt(user_encrypted);
             } catch (KeyStoreException ex) {
                 throw new KeyStoreException(ex);
             }

@@ -1,14 +1,13 @@
 package io.realm.android;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import io.realm.ObjectStoreUserStore;
+import io.realm.RealmFileUserStore;
 import io.realm.SyncUser;
 import io.realm.log.RealmLog;
 
@@ -26,54 +25,51 @@ import io.realm.log.RealmLog;
  * See also: io.realm.internal.android.crypto.class.CipherClient
  * @see <a href="https://developer.android.com/training/articles/keystore.html">Android KeyStore</a>
  */
-public class SecureUserStore extends ObjectStoreUserStore {
+public class SecureUserStore extends RealmFileUserStore {
     private final CipherClient cipherClient;
 
     public SecureUserStore(final Context context) throws KeyStoreException {
-        super(context.getFilesDir().getPath());
         cipherClient = new CipherClient(context);
     }
 
     /**
-     * Store user as serialised and encrypted (Json), inside the private {@link SharedPreferences}.
-     * @param user we want to save.
-     * @return The previous user saved with this key or {@code null} if no user was replaced.
+     * Encrypt then save a {@link SyncUser} object. If another user already exists, it will be replaced.
+     *  {@link SyncUser#getIdentity()} is used as a unique identifier of a given {@link SyncUser}.
+     *
+     * @param user {@link SyncUser} object to store.
      */
     @Override
     public void put(SyncUser user) {
         try {
             String userSerialisedAndEncrypted = cipherClient.encrypt(user.toJson());
-            updateOrCreateUser(user.getIdentity(), userSerialisedAndEncrypted, "");
+            nativeUpdateOrCreateUser(user.getIdentity(), userSerialisedAndEncrypted, user.getAuthenticationUrl().toString());
         } catch (KeyStoreException e) {
             RealmLog.error(e);
         }
     }
 
     /**
-     * Retrieves the {@link SyncUser} by decrypting first the serialised Json.
-     * @return the {@link SyncUser} with the given key.
+     * Retrieves and decrypts the current {@link SyncUser}.
+     * <p>
+     * This method will throw an exception if more than one valid, logged in users exist.
+     * @return {@link SyncUser} object or {@code null} if not found.
      */
     @Override
-    public SyncUser get() {
-        String userJson = getCurrentUser();
-        if (userJson != null) {
-            try {
-                String userSerialisedAndDecrypted = cipherClient.decrypt(userJson);
-                return SyncUser.fromJson(userSerialisedAndDecrypted);
-            } catch (KeyStoreException e) {
-                RealmLog.error(e);
-                return null;
-            }
-        }
-        return null;
+    public SyncUser getCurrent() {
+        String userJson = nativeGetCurrentUser();
+        return toDecryptedSyncUserOrNull(userJson);
     }
 
     /**
-     * Remove current logged-in user.
+     * Retrieves and decrypts the specified {@link SyncUser}.
+     * <p>
+     * This method will throw an exception if more than one valid, logged in users exist.
+     * @return {@link SyncUser} object or {@code null} if not found.
      */
     @Override
-    public void remove() {
-        super.remove();
+    public SyncUser get(String identity) {
+        String userJson = nativeGetUser(identity);
+        return toDecryptedSyncUserOrNull(userJson);
     }
 
     /**
@@ -82,7 +78,7 @@ public class SecureUserStore extends ObjectStoreUserStore {
      */
     @Override
     public Collection<SyncUser> allUsers() {
-        String[] allUsers = getAllUsers();
+        String[] allUsers = nativeGetAllUsers();
         if (allUsers != null && allUsers.length > 0) {
             ArrayList<SyncUser> users = new ArrayList<SyncUser>(allUsers.length);
             for (String userJson : allUsers) {
@@ -98,5 +94,38 @@ public class SecureUserStore extends ObjectStoreUserStore {
             return users;
         }
         return Collections.emptyList();
+    }
+
+    /**
+     * Checks whether the Android KeyStore is available.
+     * This should be called before {@link #get(String)}, {@link #allUsers()})}, {@link #getCurrent()} or {@link #put(SyncUser)} as those need the KeyStore unlocked.
+     * @return {@code true} if the Android KeyStore in unlocked.
+     * @throws KeyStoreException in case of error.
+     */
+    public boolean isKeystoreUnlocked () throws KeyStoreException {
+        return cipherClient.isKeystoreUnlocked();
+    }
+
+    /**
+     * Helps unlock the KeyStore this will launch the appropriate {@link android.content.Intent}
+     * to start the platform system {@link android.app.Activity} to create/unlock the KeyStore.
+     *
+     * @throws KeyStoreException in case of error.
+     */
+    public void unlockKeystore () throws KeyStoreException {
+        cipherClient.unlockKeystore();
+    }
+
+    private SyncUser toDecryptedSyncUserOrNull(String userEncryptedJson) {
+        if (userEncryptedJson != null) {
+            try {
+                String userSerialisedAndDecrypted = cipherClient.decrypt(userEncryptedJson);
+                return SyncUser.fromJson(userSerialisedAndDecrypted);
+            } catch (KeyStoreException e) {
+                RealmLog.error(e);
+                return null;
+            }
+        }
+        return null;
     }
 }

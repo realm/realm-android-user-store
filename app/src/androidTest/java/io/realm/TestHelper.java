@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Realm Inc.
+ * Copyright 2017 Realm Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,14 @@
 
 package io.realm;
 
+import android.annotation.SuppressLint;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import io.realm.internal.objectserver.ObjectServerUser;
@@ -29,13 +33,29 @@ public class TestHelper {
     public static String USER_TOKEN = UUID.randomUUID().toString();
     public static String REALM_TOKEN = UUID.randomUUID().toString();
 
+    private final static Method SYNC_MANAGER_RESET_METHOD;
+    static {
+        try {
+            SYNC_MANAGER_RESET_METHOD = SyncManager.class.getDeclaredMethod("reset");
+            SYNC_MANAGER_RESET_METHOD.setAccessible(true);
+        } catch (NoSuchMethodException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     public static SyncUser createTestUser() {
         return createTestUser(Long.MAX_VALUE);
     }
 
+
     public static SyncUser createTestUser(long expires) {
-        Token userToken = new Token(USER_TOKEN, "JohnDoe", null, expires, null);
-        Token accessToken = new Token(REALM_TOKEN, "JohnDoe", "/foo", expires, new Token.Permission[] {Token.Permission.DOWNLOAD });
+        return createTestUser(expires, "JohnDoe");
+    }
+
+    @SuppressLint("SdCardPath")
+    public static SyncUser createTestUser(long expires, String identity) {
+        Token userToken = new Token(USER_TOKEN, identity, null, expires, null);
+        Token accessToken = new Token(REALM_TOKEN, identity, "/foo", expires, new Token.Permission[] {Token.Permission.DOWNLOAD });
         ObjectServerUser.AccessDescription desc = new ObjectServerUser.AccessDescription(accessToken, "/data/data/myapp/files/default", false);
 
         JSONObject obj = new JSONObject();
@@ -52,6 +72,16 @@ public class TestHelper {
             return SyncUser.fromJson(obj.toString());
         } catch (JSONException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void resetSyncMetadata() {
+        try {
+            SYNC_MANAGER_RESET_METHOD.invoke(null);
+        } catch (InvocationTargetException e) {
+            throw new AssertionError(e);
+        } catch (IllegalAccessException e) {
+            throw new AssertionError(e);
         }
     }
 
