@@ -59,7 +59,7 @@ public interface SyncCrypto {
      *  All operations require the KeyStore to be unlocked (authorized by the user authenticating with fingerprint/PIN/Pattern).
      * @throws KeyStoreException for any KeyStore error.
      */
-    void create_key() throws KeyStoreException;
+    void create_key_if_not_available() throws KeyStoreException;
 
     /**
      * Check if the Android KeyStore is unlocked.

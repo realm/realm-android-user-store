@@ -20,6 +20,8 @@ import android.annotation.TargetApi;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.security.KeyPairGeneratorSpec;
 
@@ -79,6 +81,9 @@ public class SyncCryptoApi18Impl implements SyncCrypto {
         PRNGFixes.apply();
         this.context = context;
         try {
+            PackageInfo pi = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            alias += "_" + pi.packageName; // make the alias unique per package
+
             keyStore = java.security.KeyStore.getInstance(ANDROID_KEYSTORE);
             keyStore.load(null);
         } catch (KeyStoreException e) {
@@ -93,6 +98,7 @@ public class SyncCryptoApi18Impl implements SyncCrypto {
         } catch (IOException e) {
             e.printStackTrace();
             throw new KeyStoreException(e);
+        } catch (PackageManager.NameNotFoundException ignored) {
         }
     }
 
@@ -164,29 +170,25 @@ public class SyncCryptoApi18Impl implements SyncCrypto {
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
-    public void create_key() throws KeyStoreException {
+    public void create_key_if_not_available() throws KeyStoreException {
         try {
-            // Create new key.
-            // Avoid a known bug in Api 23 where we need names in KeyStore to be unique
-            // http://stackoverflow.com/questions/23977407/android-4-3-keystore-chain-null-while-trying-to-retrieve-keys
-            if (keyStore.containsAlias(alias)) {
-                keyStore.deleteEntry(alias);
-            }
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
-            end.add(Calendar.YEAR, 1);
+            if (!keyStore.containsAlias(alias)) {
+                Calendar start = Calendar.getInstance();
+                Calendar end = Calendar.getInstance();
+                end.add(Calendar.YEAR, 10);
 
-            KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
-                    .setAlias(alias)
-                    .setSubject(new X500Principal(X500_PRINCIPAL))
-                    .setSerialNumber(BigInteger.ONE)
-                    .setStartDate(start.getTime())
-                    .setEndDate(end.getTime())
-                    .build();
-            KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA",
-                    "AndroidKeyStore");
-            generator.initialize(spec);
-            generator.generateKeyPair();
+                KeyPairGeneratorSpec spec = new KeyPairGeneratorSpec.Builder(context)
+                        .setAlias(alias)
+                        .setSubject(new X500Principal(X500_PRINCIPAL))
+                        .setSerialNumber(BigInteger.ONE)
+                        .setStartDate(start.getTime())
+                        .setEndDate(end.getTime())
+                        .build();
+                KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA",
+                        "AndroidKeyStore");
+                generator.initialize(spec);
+                generator.generateKeyPair();
+            }
         } catch (Exception e) {
             throw new KeyStoreException(e);
         }

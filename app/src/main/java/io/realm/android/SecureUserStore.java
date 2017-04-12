@@ -17,156 +17,131 @@
 package io.realm.android;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.security.KeyStoreException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
-import java.util.Set;
+import java.util.Collections;
 
+import io.realm.RealmFileUserStore;
 import io.realm.SyncUser;
-import io.realm.UserStore;
+import io.realm.log.RealmLog;
 
 /**
  * Encrypt and decrypt the token ({@link SyncUser}) using Android built in KeyStore capabilities.
- * According to the Android API this picks the right algorithm to perfom the operations.
- * Prior to API 18 there were no AndroidKeyStore API, but the UNIX deamon existed to it's possible
- * with the help of this code: https://github.com/nelenkov/android-keystore.
+ * According to the Android API this picks the right algorithm to perform the operations.
+ * Prior to API 18 there were no AndroidKeyStore API, but the Linux daemon existed, so it's possible
+ * with the help of this code: https://github.com/nelenkov/android-keystore to work with.
  *
  * On API &gt; = 18, we generate an AES key to encrypt we then generate and uses the RSA key inside the KeyStore
- * to encrypt the AES key that we store along the encrypted data inside a private {@link SharedPreferences}.
+ * to encrypt the AES key that we store along the encrypted data inside the Realm Object Store.
  *
- * This throws a {@link KeyStoreException} in case of an error or KeyStore being unvailable (unlocked).
+ * This throws a {@link KeyStoreException} in case of an error or KeyStore being unavailable (unlocked).
  *
  * See also: io.realm.internal.android.crypto.class.CipherClient
  * @see <a href="https://developer.android.com/training/articles/keystore.html">Android KeyStore</a>
  */
-public class SecureUserStore implements UserStore {
-    private static final String REALM_OBJECT_SERVER_USERS = "realm_object_server_users";
+public class SecureUserStore extends RealmFileUserStore {
     private final CipherClient cipherClient;
-    private final SharedPreferences sp;
-    private SyncUser cachedCurrentUser; // Keep a quick reference to the current user
 
     public SecureUserStore(final Context context) throws KeyStoreException {
         cipherClient = new CipherClient(context);
-        sp = context.getSharedPreferences(REALM_OBJECT_SERVER_USERS, Context.MODE_PRIVATE);
     }
 
     /**
-     * Store user as serialised and encrypted (Json), inside the private {@link SharedPreferences}.
-     * @param key the {@link SharedPreferences} key.
-     * @param user we want to save.
-     * @return The previous user saved with this key or {@code null} if no user was replaced.
+     * Encrypt then save a {@link SyncUser} object. If another user already exists, it will be replaced.
+     *  {@link SyncUser#getIdentity()} is used as a unique identifier of a given {@link SyncUser}.
+     *
+     * @param user {@link SyncUser} object to store.
      */
     @Override
-    public SyncUser put(String key, SyncUser user) {
-        String previousUser = sp.getString(key, null);
-        SharedPreferences.Editor editor = sp.edit();
-        String userSerialisedAndEncrypted;
+    public void put(SyncUser user) {
         try {
-            userSerialisedAndEncrypted = cipherClient.encrypt(user.toJson());
+            String userSerialisedAndEncrypted = cipherClient.encrypt(user.toJson());
+            nativeUpdateOrCreateUser(user.getIdentity(), userSerialisedAndEncrypted, user.getAuthenticationUrl().toString());
         } catch (KeyStoreException e) {
-            e.printStackTrace();
-            return null;
-        }
-        editor.putString(key, userSerialisedAndEncrypted);
-        // Optimistically save. If the user isn't saved due to a process crash it isn't dangerous.
-        editor.apply();
-
-        if (UserStore.CURRENT_USER_KEY.equals(key)) {
-            cachedCurrentUser = user;
-        }
-        if (previousUser != null) {
-            try {
-                String userSerialisedAndDecrypted = cipherClient.decrypt(previousUser);
-                return SyncUser.fromJson(userSerialisedAndDecrypted);
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            return null;
+            RealmLog.error(e);
         }
     }
 
     /**
-     * Retrieves the {@link SyncUser} by decrypting first the serialised Json.
-     * @param key the {@link SharedPreferences} key.
-     * @return the {@link SyncUser} with the given key.
+     * Retrieves and decrypts the current {@link SyncUser}.
+     * <p>
+     * This method will throw an exception if more than one valid, logged in users exist.
+     * @return {@link SyncUser} object or {@code null} if not found.
      */
     @Override
-    public SyncUser get(String key) {
-        if (key.equals(UserStore.CURRENT_USER_KEY) && cachedCurrentUser != null) {
-            return cachedCurrentUser;
-        }
-
-        String userData = sp.getString(key, "");
-        if (userData.equals("")) {
-            return null;
-        }
-
-        try {
-            String userSerialisedAndDecrypted = cipherClient.decrypt(userData);
-            SyncUser user = SyncUser.fromJson(userSerialisedAndDecrypted);
-            if (UserStore.CURRENT_USER_KEY.equals(key)) {
-                cachedCurrentUser = user;
-            }
-            return user;
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-            return null;
-        }
+    public SyncUser getCurrent() {
+        String userJson = nativeGetCurrentUser();
+        return toDecryptedSyncUserOrNull(userJson);
     }
 
+    /**
+     * Retrieves and decrypts the specified {@link SyncUser}.
+     * <p>
+     * This method will throw an exception if more than one valid, logged in users exist.
+     * @return {@link SyncUser} object or {@code null} if not found.
+     */
     @Override
-    public SyncUser remove(String key) {
-        String currentUser = sp.getString(key, null);
-        SharedPreferences.Editor editor = sp.edit();
-        editor.putString(key, null);
-        editor.apply();
-
-        if (UserStore.CURRENT_USER_KEY.equals(key) && cachedCurrentUser != null) {
-            cachedCurrentUser = null;
-        }
-
-        if (currentUser != null) {
-            try {
-                String userSerialisedAndDecrypted = cipherClient.decrypt(currentUser);
-                return SyncUser.fromJson(userSerialisedAndDecrypted);
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-                return null;
-            }
-        } else {
-            return null;
-        }
+    public SyncUser get(String identity) {
+        String userJson = nativeGetUser(identity);
+        return toDecryptedSyncUserOrNull(userJson);
     }
 
+    /**
+     * Retries all {@link SyncUser}.
+     * @return Active (logged-in) users.
+     */
     @Override
     public Collection<SyncUser> allUsers() {
-        Map<String, ?> all = sp.getAll();
-        ArrayList<SyncUser> users = new ArrayList<SyncUser>(all.size());
-        for (Object userJson : all.values()) {
-            String userSerialisedAndDecrypted = null;
-            try {
-                userSerialisedAndDecrypted = cipherClient.decrypt((String) userJson);
-            } catch (KeyStoreException e) {
-                e.printStackTrace();
-                // returning null will probably penalise the other Users
+        String[] allUsers = nativeGetAllUsers();
+        if (allUsers != null && allUsers.length > 0) {
+            ArrayList<SyncUser> users = new ArrayList<SyncUser>(allUsers.length);
+            for (String userJson : allUsers) {
+                String userSerialisedAndDecrypted = null;
+                try {
+                    userSerialisedAndDecrypted = cipherClient.decrypt(userJson);
+                } catch (KeyStoreException e) {
+                    RealmLog.error(e);
+                    // returning null will probably penalise the other Users
+                }
+                users.add(SyncUser.fromJson(userSerialisedAndDecrypted));
             }
-            users.add(SyncUser.fromJson(userSerialisedAndDecrypted));
+            return users;
         }
-        return users;
+        return Collections.emptyList();
     }
 
-    @Override
-    public void clear() {
-        Set<String> all = sp.getAll().keySet();
-        SharedPreferences.Editor editor = sp.edit();
-        for (String key : all) {
-            editor.remove(key);
+    /**
+     * Checks whether the Android KeyStore is available.
+     * This should be called before {@link #get(String)}, {@link #allUsers()})}, {@link #getCurrent()} or {@link #put(SyncUser)} as those need the KeyStore unlocked.
+     * @return {@code true} if the Android KeyStore in unlocked.
+     * @throws KeyStoreException in case of error.
+     */
+    public boolean isKeystoreUnlocked () throws KeyStoreException {
+        return cipherClient.isKeystoreUnlocked();
+    }
+
+    /**
+     * Helps unlock the KeyStore this will launch the appropriate {@link android.content.Intent}
+     * to start the platform system {@link android.app.Activity} to create/unlock the KeyStore.
+     *
+     * @throws KeyStoreException in case of error.
+     */
+    public void unlockKeystore () throws KeyStoreException {
+        cipherClient.unlockKeystore();
+    }
+
+    private SyncUser toDecryptedSyncUserOrNull(String userEncryptedJson) {
+        if (userEncryptedJson != null) {
+            try {
+                String userSerialisedAndDecrypted = cipherClient.decrypt(userEncryptedJson);
+                return SyncUser.fromJson(userSerialisedAndDecrypted);
+            } catch (KeyStoreException e) {
+                RealmLog.error(e);
+                return null;
+            }
         }
-        editor.apply();
+        return null;
     }
 }

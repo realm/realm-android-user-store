@@ -29,33 +29,35 @@ public class SyncCryptoApi23Impl extends SyncCryptoApi18Impl {
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void create_key() throws KeyStoreException {
-        try {
-            Calendar start = Calendar.getInstance();
-            Calendar end = Calendar.getInstance();
-            end.add(Calendar.YEAR, 1);
+    public void create_key_if_not_available() throws KeyStoreException {
+        if (!keyStore.containsAlias(alias)) {
+            try {
+                Calendar start = Calendar.getInstance();
+                Calendar end = Calendar.getInstance();
+                end.add(Calendar.YEAR, 10);
 
-            KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEYSTORE);
-            KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(alias,
-                    KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                    .setCertificateSubject(new X500Principal(X500_PRINCIPAL))
-                    .setCertificateSerialNumber(BigInteger.ONE)
-                    .setCertificateNotBefore(start.getTime())
-                    .setCertificateNotAfter(end.getTime())
-                    .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
-                    .setRandomizedEncryptionRequired(false)
-                    .build();
-            keyGenerator.initialize(spec);
-            keyGenerator.generateKeyPair();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            throw new KeyStoreException(e);
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-            throw new KeyStoreException(e);
-        } catch (NoSuchProviderException e) {
-            e.printStackTrace();
-            throw new KeyStoreException(e);
+                KeyPairGenerator keyGenerator = KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, ANDROID_KEYSTORE);
+                KeyGenParameterSpec spec = new KeyGenParameterSpec.Builder(alias,
+                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setCertificateSubject(new X500Principal(X500_PRINCIPAL))
+                        .setCertificateSerialNumber(BigInteger.ONE)
+                        .setCertificateNotBefore(start.getTime())
+                        .setCertificateNotAfter(end.getTime())
+                        .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_RSA_PKCS1)
+                        .setRandomizedEncryptionRequired(false)
+                        .build();
+                keyGenerator.initialize(spec);
+                keyGenerator.generateKeyPair();
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                throw new KeyStoreException(e);
+            } catch (InvalidAlgorithmParameterException e) {
+                e.printStackTrace();
+                throw new KeyStoreException(e);
+            } catch (NoSuchProviderException e) {
+                e.printStackTrace();
+                throw new KeyStoreException(e);
+            }
         }
     }
 }
