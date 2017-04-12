@@ -2,7 +2,7 @@
 apply plugin: 'ch.netzwerg.release'
 project.ext.sdkVersion = 24
 project.ext.buildTools = '24.0.3'
-project.ext.realmVersion = '3.1.0-SNAPSHOT'
+project.ext.realmVersion = '3.1.2'
 
 buildscript {
     repositories {
