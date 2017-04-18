@@ -49,7 +49,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.realm:android-sync-user-encryption:<version>'
+    compile 'io.realm:secure-userstore:<version>'
 }
 ```
 
