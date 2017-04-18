@@ -19,7 +19,7 @@ repositories {
 }
 
 dependencies {
-    compile 'io.realm:android-sync-user-encryption:1.0.0'
+    compile 'io.realm:secure-userstore:1.0.1'
 }
 ```
 
