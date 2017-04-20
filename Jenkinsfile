@@ -25,6 +25,8 @@ try {
       buildEnv.inside("-e HOME=/tmp -e _JAVA_OPTIONS=-Duser.home=/tmp --privileged -v /dev/bus/usb:/dev/bus/usb -v ${env.HOME}/gradle-cache:/tmp/.gradle -v ${env.HOME}/.android:/tmp/.android -v ${env.HOME}/ccache:/tmp/.ccache") {
         stage('Build & Test') {
           try {
+            // unlock the device
+            unlockDevice()
             gradle 'assemble javadoc check connectedCheck'
             if (env.BRANCH_NAME == 'master') {
               stage('Collect metrics') {
@@ -54,6 +56,12 @@ def String startLogCatCollector() {
   echo $! > pid
   '''
   return readFile("pid").trim()
+}
+
+def unlockDevice() {
+  sh '''adb shell input text 1234
+   && adb shell input keyevent 66
+   '''
 }
 
 def stopLogCatCollector(String backgroundPid, boolean archiveLog) {
